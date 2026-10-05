@@ -23,7 +23,7 @@
       overflow: hidden;
 
       /* 3D 원근감 */
-      perspective: 900px;
+      perspective: 1000px;
     }
 
     .square {
@@ -80,11 +80,25 @@
         "Nanum Myeongjo",
         serif;
 
-      font-size: 24px;
+      font-size: 30px;
       font-weight: 700;
 
-      letter-spacing: 1px;
+      letter-spacing: 5px;
+
+      /* 추가 */
+      transform-origin: 125px 125px;
+      animation: rotateText 60s linear infinite;
     }
+
+    @keyframes rotateText {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+      transform: rotate(360deg);
+      }
+}
   </style>
 </head>
 
@@ -115,7 +129,7 @@
       <text>
         <textPath
           href="#text-circle"
-          startOffset="7%"
+          startOffset="5%"
         >
           우리를 밟으면 사랑에 빠지리...
         </textPath>
@@ -157,7 +171,7 @@
         숫자를 키우면 더 과감하게,
         줄이면 더 미세하게 움직입니다.
       */
-      const maxTilt = 10;
+      const maxTilt = 9;
 
       /*
         커서의 반대쪽이 앞으로 나오도록 회전
