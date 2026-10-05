@@ -22,7 +22,7 @@
       background: #ffffff;
       overflow: hidden;
 
-      /* 입체적인 회전을 위한 원근감 */
+      /* 3D 원근감 */
       perspective: 900px;
     }
 
@@ -42,38 +42,34 @@
       transform-style: preserve-3d;
 
       transition:
-        transform 0.45s cubic-bezier(.2, .8, .2, 1),
-        box-shadow 0.45s ease;
+        transform 0.12s ease-out,
+        box-shadow 0.25s ease;
 
       cursor: pointer;
     }
 
     .square:hover {
-      transform:
-        rotateX(5deg)
-        rotateY(-7deg)
-        rotateZ(1deg)
-        translateY(-4px);
-
       box-shadow:
-        8px 14px 24px rgba(0, 0, 0, 0.07),
-        18px 32px 60px rgba(0, 0, 0, 0.10);
+        0 16px 25px rgba(0, 0, 0, 0.08),
+        0 30px 60px rgba(0, 0, 0, 0.12);
     }
 
     .circular-text {
       position: absolute;
 
-      width: 76%;
-      height: 76%;
+      width: 86%;
+      height: 86%;
 
       left: 50%;
       top: 50%;
 
       transform:
         translate(-50%, -50%)
-        translateZ(15px);
+        translateZ(18px);
 
       overflow: visible;
+
+      pointer-events: none;
     }
 
     .circular-text text {
@@ -84,52 +80,124 @@
         "Nanum Myeongjo",
         serif;
 
-      font-size: 17px;
-      font-weight: 500;
+      font-size: 24px;
+      font-weight: 700;
 
-      letter-spacing: 1.2px;
+      letter-spacing: 1px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="square">
+  <div class="square" id="square">
 
     <svg
       class="circular-text"
       viewBox="0 0 250 250"
       aria-label="우리를 밟으면 사랑에 빠지리"
     >
-
       <defs>
+
         <!--
-          원형 텍스트가 따라갈 경로.
-          중앙 (125,125), 반지름 83
+          텍스트가 따라가는 원형 경로
         -->
         <path
           id="text-circle"
           d="
-            M 125,42
-            A 83,83 0 1,1 124.9,42
+            M 125,38
+            A 87,87 0 1,1 124.9,38
           "
         />
+
       </defs>
 
       <text>
         <textPath
           href="#text-circle"
-          startOffset="0%"
+          startOffset="7%"
         >
-          우리를 밟으면 사랑에 빠지리... ·
-          우리를 밟으면 사랑에 빠지리... ·
-          우리를 밟으면 사랑에 빠지리... ·
+          우리를 밟으면 사랑에 빠지리...
         </textPath>
       </text>
 
     </svg>
 
   </div>
+
+
+  <script>
+    const square = document.getElementById("square");
+
+    square.addEventListener("mousemove", (event) => {
+
+      const rect = square.getBoundingClientRect();
+
+      /*
+        마우스의 위치를 정사각형 내부 좌표로 변환
+      */
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+
+      /*
+        -1 ~ 1 사이의 값으로 정규화
+
+        왼쪽  = -1
+        오른쪽 = 1
+
+        위쪽   = -1
+        아래쪽 = 1
+      */
+      const x = (mouseX / rect.width - 0.5) * 2;
+      const y = (mouseY / rect.height - 0.5) * 2;
+
+      /*
+        기울기 강도
+
+        숫자를 키우면 더 과감하게,
+        줄이면 더 미세하게 움직입니다.
+      */
+      const maxTilt = 10;
+
+      /*
+        커서의 반대쪽이 앞으로 나오도록 회전
+      */
+      const rotateY = x * maxTilt;
+      const rotateX = -y * maxTilt;
+
+      square.style.transform = `
+        rotateX(${rotateX}deg)
+        rotateY(${rotateY}deg)
+        translateZ(3px)
+      `;
+    });
+
+
+    /*
+      마우스가 정사각형 밖으로 나가면
+      천천히 원래 상태로 복귀
+    */
+    square.addEventListener("mouseleave", () => {
+
+      square.style.transition =
+        "transform 0.45s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s ease";
+
+      square.style.transform =
+        "rotateX(0deg) rotateY(0deg) translateZ(0)";
+    });
+
+
+    /*
+      다시 들어오면 즉각 반응하도록
+      transition 속도를 짧게 복원
+    */
+    square.addEventListener("mouseenter", () => {
+
+      square.style.transition =
+        "transform 0.12s ease-out, box-shadow 0.25s ease";
+    });
+
+  </script>
 
 </body>
 </html>
